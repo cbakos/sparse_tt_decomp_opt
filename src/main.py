@@ -3,7 +3,7 @@ from scipy.io import mmread
 import cvxopt
 from cvxopt import amd
 
-from tile_size import prime_factors
+from tile_size import prime_factors, possible_tile_sizes_from_factors
 from variable_ordering import amd_order, rcm_order
 
 if __name__ == '__main__':
@@ -16,4 +16,5 @@ if __name__ == '__main__':
     order2 = rcm_order(a)
 
     factors = prime_factors(n)
-    z
+    tiles = possible_tile_sizes_from_factors(factors)
+    tiles
