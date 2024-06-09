@@ -18,6 +18,6 @@ if __name__ == '__main__':
     factors = prime_factors(n)
     tiles = possible_tile_sizes_from_factors(factors)
     for tile in tiles:
-        r = get_rank_from_tile_size(a, tile)
+        r, _ = get_rank_from_tile_size(a, tile)
         print(tile, r)
 

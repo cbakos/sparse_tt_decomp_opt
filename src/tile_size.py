@@ -1,5 +1,5 @@
 import math
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import scipy as sp
@@ -30,37 +30,39 @@ def possible_tile_sizes_from_factors(factors: List[int]) -> np.array:
     return products
 
 
-def get_rank_from_tile_size(a: ssp.spmatrix, tile_size: int) -> int:
+def get_rank_from_tile_size(a: ssp.spmatrix, tile_size: int) -> Tuple[int, List[np.array]]:
     """
-    Returns the TTM-rank when a given tile size is used in the matrix2mpo algorithm.
+    Returns the TTM-rank and nonzero block locations, when a given tile size is used in the matrix2mpo algorithm.
     :param a: sparse, square matrix
     :param tile_size: size of sub-matrices used to cover the matrix, must be a divisor of the matrix size
-    :return: TTM-rank when a given tile size is used in the matrix2mpo algorithm.
+    :return: TTM-rank, nonzero block locations: rows[i] contains the nonzero row-block indices for column-block i
     """
     n = a.shape[0]
     r = 0  # the total maximal TTM-rank
     num_blocks = n // tile_size
-    rows = [None] * num_blocks
+    rows = [[]] * num_blocks
 
     if not ssp.isspmatrix_csr(a):
         a = a.tocsr()
 
-    for i in range(num_blocks):  # i counts the columns
+    for i in range(num_blocks):  # i counts the columns-blocks
         # determines which rows on this 'block column' are nonzero - linear indices
-        nonzero_blocks_i = np.nonzero(np.sum(np.abs(a[:, i * tile_size:(i + 1) * tile_size]).toarray(), axis=1))[0]
+        col_i_nonzero_row_indices = np.nonzero(np.sum(np.abs(a[:, i * tile_size:(i + 1) * tile_size]).toarray(), axis=1))[0]
 
         # if there is at least one nonzero element in this block column, then proceed
-        if nonzero_blocks_i.size > 0:
+        if col_i_nonzero_row_indices.size > 0:
             # round down to nearest integer - get row block index for each nonzero entry in the column block
-            nonzero_blocks_i = np.floor_divide(nonzero_blocks_i, tile_size)
+            col_i_nonzero_row_block_indices = np.floor_divide(col_i_nonzero_row_indices, tile_size)
 
-            # diff(I): finds transition indices from one block to the next
-            # np.where: gives linear indices of these transition points
-            # +1: gives index of the next block index
-            # I[0]: gives first nonzero block index, others determined by previously created indices
-            rows[i] = np.concatenate(([nonzero_blocks_i[0]],
-                                      nonzero_blocks_i[np.where(np.diff(nonzero_blocks_i))[0] + 1]))
+            # np.diff: finds transition points from one block to the next
+            block_transition_diff_mask = np.diff(col_i_nonzero_row_block_indices)
+            # np.where: gives linear indices from these transition difference values (+1 since 0th element is skipped)
+            block_transition_indices = np.where(block_transition_diff_mask)[0] + 1
+
+            first_nonzero_row_block_index = [col_i_nonzero_row_block_indices[0]]
+            remaining_nonzero_row_block_indices = col_i_nonzero_row_block_indices[block_transition_indices]
+            rows[i] = np.concatenate((first_nonzero_row_block_index, remaining_nonzero_row_block_indices))
 
             # increment rank by the number of nonzero blocks in this column
             r += len(rows[i])
-    return r
+    return r, rows
