@@ -1,11 +1,11 @@
 import numpy as np
-import scipy.sparse as sp
+import scipy.sparse as ssp
 import cvxopt
 from cvxopt import amd
 from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 
-def amd_order(a: sp.spmatrix) -> np.array:
+def amd_order(a: ssp.spmatrix) -> np.array:
     """
     Takes a sparse, square scipy matrix and returns its approximate minimum degree (amd) variable ordering.
     :param a: the sparse matrix
@@ -18,7 +18,7 @@ def amd_order(a: sp.spmatrix) -> np.array:
     return order
 
 
-def rcm_order(a: sp.spmatrix, is_symmetric: bool = True) -> np.array:
+def rcm_order(a: ssp.spmatrix, is_symmetric: bool = True) -> np.array:
     """
     Takes a sparse, square scipy matrix and returns its reverse Cuthill-McKee variable ordering.
     :param is_symmetric: whether matrix is symmetric
