@@ -89,6 +89,28 @@ class TestPartialGauss(unittest.TestCase):
         expected_sol = np.linalg.solve(a, b)
         self.assertTrue(np.allclose(sol, expected_sol))
 
+    def test_sdd_partial_back_subst(self):
+        n = 4
+        np.random.seed(2)
+        a = np.random.rand(n, n).astype(np.float64)
+        a += np.diag(np.random.randint(n, n**2, n))
+        b = np.sum(a, axis=1).reshape(-1, 1).astype(np.float64)
+        k = 2
+        ab = np.hstack((a, b))
+
+        # reduce part
+        reduced_ab = partial_row_reduce(ab, k)
+        sub_solution = np.linalg.solve(ab[k:, k:n], ab[k:, n:])
+        part_solved_a = reduced_ab[:, :n]
+        part_solved_a[k:n, k:n] = np.eye(n-k, n-k)
+        x = np.zeros_like(b)
+        x[k:n] = sub_solution
+
+        # back substitution
+        sol = partial_gauss_back_subst(part_solved_a, x, reduced_ab[:, n:], k)
+        expected_sol = np.ones((n, 1))
+        self.assertTrue(np.allclose(sol, expected_sol))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -19,7 +19,6 @@ def partial_row_reduce(a: np.array, k: int) -> np.array:
         for j in range(i + 1, n):  # columns from pivot column i
             m = a[j, i] / a_ii
             a[j, :] = a[j, :] - m * a_i
-
     return a
 
 
