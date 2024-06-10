@@ -1,6 +1,3 @@
-from typing import Tuple
-
-import sympy.matrices as sm
 import numpy as np
 
 
@@ -17,7 +14,6 @@ def partial_row_reduce(a: np.array, k: int) -> np.array:
 
     # Elimination process
     for i in range(k):  # first k rows
-        # Elementary row operations
         a_i = a[i, :]
         a_ii = a_i[i]
         for j in range(i + 1, n):  # columns from pivot column i
@@ -27,15 +23,21 @@ def partial_row_reduce(a: np.array, k: int) -> np.array:
     return a
 
 
-def partial_gauss_back_subst(a, k, x):
+def partial_gauss_back_subst(a, x, b, k):
+    """
+    Performs back substitution on a dense matrix a with partially solved solution vector x. Assumes that the last n-k
+    variables are already solved.
+    :param a: partially row-reduced matrix, last n-k variables are already solved (i.e. a equals identity for those)
+    :param x: solution vector
+    :param b: right hand side vector
+    :param k: number of variables to solve
+    :return: x, the solution vector
+    """
     n = a.shape[0]
     s = 0
     for i in range(k - 1, -1, -1):  # rows from k-1 down to 0
-        for j in range(i + 1, n):  # columns from i+1 to n-1
+        for j in range(i + 1, n):  # columns
             s += a[i, j] * x[j]
-        x[i] = (a[i, n] - s) / a[i, i]
+        x[i] = (b[i] - s) / a[i, i]
         s = 0
     return x
-
-
-# https://docs.sympy.org/latest/modules/matrices/matrices.html#sympy.matrices.matrixbase.MatrixBase.elementary_row_op
