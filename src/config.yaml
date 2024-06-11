@@ -1,0 +1,21 @@
+program: experiments.py
+name: sweepdemo
+method: grid
+metric:
+  goal: minimize
+  name: r2I6
+parameters:
+  matrix_name:
+    values: ["ex3", "ex10", "ex10hs", "ex13", "ex15"]
+  padding:
+    distribution: int_uniform
+    min: 0
+    max: 10
+  amd:
+    values: [True, False]
+  rcm:
+    values: [True, False]
+  partial_gauss:
+    distribution: int_uniform
+    min: 0
+    max: 100

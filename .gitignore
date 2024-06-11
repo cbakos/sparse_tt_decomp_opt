@@ -126,3 +126,5 @@ dmypy.json
 
 # pycharm project config
 .idea
+
+src/wandb
