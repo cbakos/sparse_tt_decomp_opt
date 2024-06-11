@@ -1,9 +1,8 @@
 import unittest
 import numpy as np
-import scipy as sp
 import sympy
 
-from partial_gauss import partial_row_reduce, partial_gauss_back_subst
+from optimizers.partial_gauss import partial_row_reduce, partial_gauss_back_subst
 
 
 class TestPartialGauss(unittest.TestCase):

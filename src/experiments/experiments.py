@@ -4,10 +4,10 @@ import scipy.sparse as ssp
 import wandb
 import yaml
 
-from padding import sparse_padding
-from partial_gauss import partial_row_reduce
-from tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
-from variable_ordering import amd_order, rcm_order
+from optimizers.padding import sparse_padding
+from optimizers.partial_gauss import partial_row_reduce
+from optimizers.tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
+from optimizers.variable_ordering import amd_order, rcm_order
 
 
 def compute_r2mode6(rank: int, max_mode: int) -> int:

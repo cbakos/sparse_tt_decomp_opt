@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from tile_size import get_rank_from_tile_size
+from optimizers.tile_size import get_rank_from_tile_size
 
 
 class TestTileSize(unittest.TestCase):
