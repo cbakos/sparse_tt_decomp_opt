@@ -128,3 +128,4 @@ dmypy.json
 .idea
 
 src/wandb
+src/experiments/wandb

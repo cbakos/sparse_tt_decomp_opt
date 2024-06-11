@@ -20,7 +20,7 @@ def run_experiments():
     # Access the parameters through wandb.config
     cfg = wandb.config
 
-    path = "../data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
+    path = "../../data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
     a = mmread(path)  # reads to coo_matrix format
 
     # minimize fill in
@@ -61,6 +61,9 @@ def run_experiments():
     tile_sizes = possible_tile_sizes_from_factors(factors)
     for tile in tile_sizes:
         r, _ = get_rank_from_tile_size(a, tile)
+
+        # since we combine factors, maximum mode size is the max of the largest factor and chosen tile size
+        max_mode_size = max(max_mode_size, tile)
         r2mode6 = compute_r2mode6(r, max_mode_size)
         wandb.log({"rank": r, "max_mode_size": max_mode_size, "tile_size": tile, "z": z, "n": n, "r2mode6": r2mode6})
 

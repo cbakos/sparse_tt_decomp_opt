@@ -18,18 +18,19 @@ if __name__ == '__main__':
     runs = sweep.runs
 
     # Collect the relevant data from each run
-    data = []
+    all_data = []
     for run in runs:
-        summary = run.summary._json_dict
+        history = run.history()
         config = run.config
-        name = run.name
-        data.append({**config, **summary, 'name': name})
+        for _, row in history.iterrows():
+            row_data = {**config, **row, 'run_id': run.id, 'run_name': run.name}
+            all_data.append(row_data)
 
     # Convert the data to a Pandas DataFrame
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(all_data)
 
     # Display the DataFrame
     print(df)
 
     # Save the DataFrame to a CSV file if needed
-    df.to_csv('../data/sweep_data.csv', index=False)
+    df.to_csv('../../data/sweep_data.csv', index=False)

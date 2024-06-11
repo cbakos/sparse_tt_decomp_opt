@@ -1,5 +1,5 @@
 program: experiments.py
-name: sweepdemo
+name: sweep_0_3
 method: grid
 metric:
   goal: minimize
