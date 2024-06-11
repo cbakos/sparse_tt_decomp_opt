@@ -5,7 +5,7 @@ from cvxopt import amd
 from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 
-def amd_order(a: ssp.spmatrix) -> np.array:
+def amd_order(a: ssp.coo_matrix) -> np.array:
     """
     Takes a sparse, square scipy matrix and returns its approximate minimum degree (amd) variable ordering.
     :param a: the sparse matrix

@@ -1,27 +1,76 @@
+from scipy.io import mmread
+import scipy.sparse as ssp
+
 import wandb
+import yaml
+
+from padding import sparse_padding
+from partial_gauss import partial_row_reduce
+from tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
+from variable_ordering import amd_order, rcm_order
+
+
+def compute_r2mode6(rank: int, max_mode: int) -> int:
+    return rank**2 * max_mode**6
+
+
+def run_experiments():
+    # Initialize a new run
+    wandb.init()
+    # Access the parameters through wandb.config
+    cfg = wandb.config
+
+    path = "../data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
+    a = mmread(path)  # reads to coo_matrix format
+
+    # minimize fill in
+    if cfg.amd:
+        order = amd_order(a)
+        # perform row and column permutations
+        a = a.tocsr()
+        a.indices = order.take(a.indices)
+        a = a.tocsc()
+        a.indices = order.take(a.indices)
+        a = a.tocsr()
+
+    # reduce n
+    if cfg.partial_gauss > 0:
+        a = a.toarray()
+        full_a = partial_row_reduce(a, cfg.partial_gauss)
+        # get remaining part
+        a = full_a[cfg.partial_gauss:, cfg.partial_gauss:]
+        a = ssp.csr_matrix(a)
+
+    # increase n
+    if cfg.padding > 0:
+        a = sparse_padding(a.tocoo(), cfg.padding)
+
+    # concentrate nnz entries
+    if cfg.rcm:
+        order = rcm_order(a)
+        a = a.tocsr()
+        a.indices = order.take(a.indices)
+        a = a.tocsc()
+        a.indices = order.take(a.indices)
+
+    # determine ranks, mode sizes and r2I6
+    n = a.shape[0]
+    z = a.nnz
+    factors = prime_factors(n)
+    max_mode_size = max(factors)
+    tile_sizes = possible_tile_sizes_from_factors(factors)
+    for tile in tile_sizes:
+        r, _ = get_rank_from_tile_size(a, tile)
+        r2mode6 = compute_r2mode6(r, max_mode_size)
+        wandb.log({"rank": r, "max_mode_size": max_mode_size, "tile_size": tile, "z": z, "n": n, "r2mode6": r2mode6})
+
 
 if __name__ == '__main__':
-    matrix_names = ["ex3", "ex10", "ex10hs", "ex13", "ex15"]
-    method_names = ["factor", "amd", "rcm", "padding", "partial_gauss"]
-    # note: factor can be done alone, but every other method uses it too
-    # amd and rcm work on fixed/original n only
-    # padding and partial_gauss: need to specify which n's to try - to get full picture just try "all"
-    # i.e. for padding, do n, n+1, ... , 2n and for partial gauss do k = 0, 1, ..., n
+    # Load the YAML configuration file
+    with open('config.yaml', 'r') as file:
+        sweep_config = yaml.safe_load(file)
 
-    # second generation: combine two at a time:
-
-    # experiment data columns:  tile size (int), variable_order (None, amd, rcm), padding (int), partial_gauss (int),
-    #                           matrix_name (str), rank (int), max_mode_size (int)
-
-    wandb.init(
-        # set the wandb project where this run will be logged
-        project="sparse_tt_decomp_opt",
-
-        # track hyperparameters and run metadata
-        config={
-            "learning_rate": 0.02,
-            "architecture": "CNN",
-            "dataset": "CIFAR-100",
-            "epochs": 10,
-        }
-    )
+    # Initialize the sweep
+    sweep_id = wandb.sweep(sweep_config, project='sparse_tt_decomp_opt')
+    # Start the sweep agent
+    wandb.agent(sweep_id, function=run_experiments)
