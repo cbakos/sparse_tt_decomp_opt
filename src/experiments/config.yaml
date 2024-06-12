@@ -1,21 +1,21 @@
 program: experiments.py
-name: sweep_8_11
+name: sweep_0_10
 method: grid
 metric:
   goal: minimize
-  name: r2mode6
+  name: rank
 parameters:
   matrix_name:
     values: ["ex3", "ex10", "ex10hs", "ex13", "ex15"]
   padding:
     distribution: int_uniform
-    min: 8
-    max: 11
+    min: 0
+    max: 10
   amd:
     values: [True, False]
   rcm:
     values: [True, False]
   partial_gauss:
     distribution: int_uniform
-    min: 8
-    max: 11
+    min: 0
+    max: 10

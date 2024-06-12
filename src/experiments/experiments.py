@@ -64,8 +64,8 @@ def run_experiments():
 
         # since we combine factors, maximum mode size is the max of the largest factor and chosen tile size
         max_mode_size = max(max_mode_size, tile)
-        r2mode6 = compute_r2mode6(r, max_mode_size)
-        wandb.log({"rank": r, "max_mode_size": max_mode_size, "tile_size": tile, "z": z, "n": n, "r2mode6": r2mode6})
+        #  r2mode6 = compute_r2mode6(r, max_mode_size)  # skip to avoid integer overflows
+        wandb.log({"rank": r, "max_mode_size": max_mode_size, "tile_size": tile, "z": z, "n": n})
 
 
 if __name__ == '__main__':
