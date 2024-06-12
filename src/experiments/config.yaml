@@ -1,5 +1,5 @@
 program: experiments.py
-name: sweep_0_3
+name: sweep_8_11
 method: grid
 metric:
   goal: minimize
@@ -9,13 +9,13 @@ parameters:
     values: ["ex3", "ex10", "ex10hs", "ex13", "ex15"]
   padding:
     distribution: int_uniform
-    min: 0
-    max: 3
+    min: 8
+    max: 11
   amd:
     values: [True, False]
   rcm:
     values: [True, False]
   partial_gauss:
     distribution: int_uniform
-    min: 0
-    max: 3
+    min: 8
+    max: 11
