@@ -1,12 +1,12 @@
-program: experiments.py
-name: sweep_0_10
+program: src/experiments/run_experiments.py
+name: sparse_tt_decomp_opt
 method: grid
 metric:
   goal: minimize
   name: rank
 parameters:
   matrix_name:
-    values: ["ex3", "ex10", "ex10hs", "ex13", "ex15"]
+    values: ["Pres_Poisson", "bcsstk13"]  # "ex3", "ex10", "ex10hs", "ex13", "ex15",
   padding:
     distribution: int_uniform
     min: 0
