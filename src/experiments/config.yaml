@@ -8,7 +8,7 @@ metric:
   name: rank
 parameters:
   matrix_name:
-    values: ["Pres_Poisson", "bcsstk13"]  # "ex3", "ex10", "ex10hs", "ex13", "ex15",
+    values: ["ex3", "ex10", "ex10hs", "ex13", "ex15", "Pres_Poisson", "bcsstk13"]
   padding:
     distribution: int_uniform
     min: 0

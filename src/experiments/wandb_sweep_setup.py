@@ -8,7 +8,7 @@ if __name__ == '__main__':
     wandb agent cbakos/sparse_tt_decomp_opt/sweep_id  # add generated sweep id
     """
     # Load the YAML configuration file
-    with open('src/experiments/config.yaml', 'r') as file:
+    with open('config.yaml', 'r') as file:
         sweep_config = yaml.safe_load(file)
 
     # Initialize the sweep
