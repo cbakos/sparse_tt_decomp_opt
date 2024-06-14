@@ -2,6 +2,7 @@ from scipy.io import mmread
 import scipy.sparse as ssp
 
 import wandb
+import multiprocessing
 from src.optimizers.padding import sparse_padding
 from src.optimizers.partial_gauss import partial_row_reduce
 from src.optimizers.tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
@@ -17,7 +18,7 @@ def run_experiments():
     # Access the parameters through wandb.config
     cfg = wandb.config
 
-    path = "/data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
+    path = "data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
     a = mmread(path)  # reads to coo_matrix format
 
     # minimize fill in
@@ -62,4 +63,24 @@ def run_experiments():
         # since we combine factors, maximum mode size is the max of the largest factor and chosen tile size
         max_mode_size = max(max_mode_size, tile)
         wandb.log({"rank": r, "max_mode_size": max_mode_size, "tile_size": tile, "z": z, "n": n})
+
+
+def run_agent(sweep_id):
+    wandb.agent(sweep_id, function=run_experiments)
+
+
+if __name__ == '__main__':
+    num_agents = 6  # Number of parallel agents
+    sweep_id = "cbakos/sparse_tt_decomp_opt/xlo8p9vq"
+
+    processes = []
+    for _ in range(num_agents):
+        process = multiprocessing.Process(target=run_agent, args=(sweep_id,))
+        process.start()
+        processes.append(process)
+
+    # Wait for all processes to finish
+    for process in processes:
+        process.join()
+
 
