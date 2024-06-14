@@ -129,3 +129,4 @@ dmypy.json
 
 src/wandb
 src/experiments/wandb
+wandb

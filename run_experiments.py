@@ -2,19 +2,22 @@ from scipy.io import mmread
 import scipy.sparse as ssp
 
 import wandb
-from optimizers.padding import sparse_padding
-from optimizers.partial_gauss import partial_row_reduce
-from optimizers.tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
-from optimizers.variable_ordering import amd_order, rcm_order
+from src.optimizers.padding import sparse_padding
+from src.optimizers.partial_gauss import partial_row_reduce
+from src.optimizers.tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
+from src.optimizers.variable_ordering import amd_order, rcm_order
 
 
 def run_experiments():
+    """
+    Experiment script run by wandb agents.
+    """
     # Initialize a new run
     wandb.init()
     # Access the parameters through wandb.config
     cfg = wandb.config
 
-    path = "../../data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
+    path = "/data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
     a = mmread(path)  # reads to coo_matrix format
 
     # minimize fill in

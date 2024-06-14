@@ -1,4 +1,6 @@
-program: src/experiments/run_experiments.py
+command:
+  - C:\Users\bakos\Documents\TUDelft\Thesis\sparse_tt_decomp_opt\.venv\Scripts\python.exe
+  - C:\Users\bakos\Documents\TUDelft\Thesis\sparse_tt_decomp_opt\run_experiments.py
 name: sparse_tt_decomp_opt
 method: grid
 metric:
