@@ -1,3 +1,4 @@
+import numpy as np
 from scipy.io import mmread
 import scipy.sparse as ssp
 
@@ -18,7 +19,7 @@ def run_experiments():
     # Access the parameters through wandb.config
     cfg = wandb.config
 
-    path = "data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
+    path = "../../data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
     a = mmread(path)  # reads to coo_matrix format
 
     # minimize fill in
@@ -37,6 +38,10 @@ def run_experiments():
         full_a = partial_row_reduce(a, cfg.partial_gauss)
         # get remaining part
         a = full_a[cfg.partial_gauss:, cfg.partial_gauss:]
+
+        threshold = 1e-7
+        # Use np.where to set values close to zero, to zero
+        a = np.where(np.abs(a) < threshold, 0, a)
         a = ssp.csr_matrix(a)
 
     # increase n
@@ -71,7 +76,7 @@ def run_agent(sweep_id):
 
 if __name__ == '__main__':
     num_agents = 6  # Number of parallel agents
-    sweep_id = "cbakos/sparse_tt_decomp_opt/xlo8p9vq"
+    sweep_id = "cbakos/sparse_tt_decomp_opt/bt9vfn2m"
 
     processes = []
     for _ in range(num_agents):
@@ -82,5 +87,3 @@ if __name__ == '__main__':
     # Wait for all processes to finish
     for process in processes:
         process.join()
-
-
