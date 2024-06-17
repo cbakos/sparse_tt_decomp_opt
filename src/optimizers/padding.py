@@ -2,7 +2,7 @@ import numpy as np
 import scipy.sparse as ssp
 
 
-def sparse_padding(a: ssp.coo_array, k: int) -> ssp.spmatrix:
+def sparse_padding(a: ssp.coo_array, k: int) -> ssp.csr_matrix:
     """
     Adds k rows/columns of zero padding to a sparse matrix.
     :param a: sparse matrix
