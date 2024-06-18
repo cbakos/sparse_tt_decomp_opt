@@ -13,8 +13,8 @@ def amd_order(a: ssp.coo_matrix) -> np.array:
     """
     # convert to cvxopt sparse matrix format
     spa = cvxopt.spmatrix(a.data, a.row, a.col)
-    amd_order = amd.order(spa)
-    order = np.array(amd_order).flatten()  # get order as np array
+    order = amd.order(spa)
+    order = np.array(order).flatten()  # get order as np array
     return order
 
 

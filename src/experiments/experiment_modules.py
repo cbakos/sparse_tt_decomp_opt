@@ -4,18 +4,22 @@ import scipy.sparse as ssp
 
 from optimizers.padding import sparse_padding
 from optimizers.partial_gauss import partial_row_reduce
-from optimizers.variable_ordering import amd_order, rcm_order
+from optimizers.variable_ordering import rcm_order
 
 
 def amd_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
     a = a.tocoo()
     spa = cvxopt.spmatrix(a.data, a.row, a.col)
     order = cvxopt.amd.order(spa)
-    # perform row and column permutations
+    # perform row and column permutations as described in: https://cvxopt.org/userguide/spsolvers.html#matrix-orderings
     spa_reordered = spa[order, order]
+
+    # get coo values of reordered sparse matrix
     values = np.array(spa_reordered.V).flatten()
     rows = np.array(spa_reordered.I).flatten()
     cols = np.array(spa_reordered.J).flatten()
+
+    # construct result in scipy sparse matrix format
     a = ssp.coo_matrix((values, (rows, cols)))
     a = a.tocsr()
     return a
@@ -38,9 +42,21 @@ def padding_module(a: ssp.csr_matrix, num_variables: int) -> ssp.csr_matrix:
 
 
 def rcm_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
+    # get rcm order
     order = rcm_order(a)
+    order = cvxopt.matrix(order)
+
+    a = a.tocoo()
+    spa = cvxopt.spmatrix(a.data, a.row, a.col)
+    # perform row and column permutations as described in: https://cvxopt.org/userguide/spsolvers.html#matrix-orderings
+    spa_reordered = spa[order, order]
+
+    # get coo values of reordered sparse matrix
+    values = np.array(spa_reordered.V).flatten()
+    rows = np.array(spa_reordered.I).flatten()
+    cols = np.array(spa_reordered.J).flatten()
+
+    # construct result in scipy sparse matrix format
+    a = ssp.coo_matrix((values, (rows, cols)))
     a = a.tocsr()
-    a.indices = order.take(a.indices)
-    a = a.tocsc()
-    a.indices = order.take(a.indices)
     return a
