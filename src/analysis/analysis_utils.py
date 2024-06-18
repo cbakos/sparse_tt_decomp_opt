@@ -1,4 +1,5 @@
-from typing import Any
+from itertools import product
+from typing import Any, List
 
 import pandas as pd
 import numpy as np
@@ -39,30 +40,55 @@ def line_plot_padding_tile_size_tt_mals_runtime_per_matrix(df: pd.DataFrame, mat
     fig.write_image("plots/{}_padding_tile_size_vs_log_obj_func.pdf".format(matrix_str))
 
 
-def get_percentage_change_per_matrix(data_frame: pd.DataFrame, result_column: str, variable: str,
-                                     baseline_col: str, baseline_value: Any):
+def get_percentage_change_per_double_category(data_frame: pd.DataFrame, result_column: str, variable: str,
+                                              baseline_col: str, baseline_value: Any, category1: str, category2: str) \
+        -> pd.DataFrame:
     """
+
     :param data_frame: complete df
     :param result_column: column name to store results
     :param variable: name of column to check for change
     :param baseline_col: column name which determines baseline
     :param baseline_value: value in baseline column to serve as baseline
-    :return: df
+    :param category1: outer category to group by
+    :param category2: inner category to group by, passed on to get_percentage_change_per_category
+    :return: updated df
     """
-    # Initialize the z_percentage column with NaN
     data_frame[result_column] = np.nan
 
-    # Calculate change ratio for each matrix_name
-    for matrix_name in data_frame["matrix_name"].unique():
-        df_per_matrix = data_frame[data_frame["matrix_name"] == matrix_name]
-        original_values = df_per_matrix[
-            df_per_matrix[baseline_col] == baseline_value][variable].unique()
+    for category_value in data_frame[category1].unique():
+        df_per_category = data_frame[data_frame[category1] == category_value]
+        result_df = get_percentage_change_per_category(data_frame=df_per_category, result_column=result_column,
+                                                       variable=variable, baseline_col=baseline_col,
+                                                       baseline_value=baseline_value, category=category2)
+        data_frame.loc[data_frame[category1] == category_value, result_column] = result_df[result_column].values
+    return data_frame
+
+
+def get_percentage_change_per_category(data_frame: pd.DataFrame, result_column: str, variable: str,
+                                       baseline_col: str, baseline_value: Any, category: str) -> pd.DataFrame:
+    """
+
+    :param data_frame: complete df
+    :param result_column: column name to store results
+    :param variable: name of column to check for change
+    :param baseline_col: column name which determines baseline
+    :param baseline_value: value in baseline column to serve as baseline
+    :param category: df column name that we need to do a grouping over
+    :return: updated df
+    """
+    data_frame[result_column] = np.nan
+
+    for category_value in data_frame[category].unique():
+        df_per_category = data_frame[data_frame[category] == category_value]
+        original_values = df_per_category[
+            df_per_category[baseline_col] == baseline_value][variable].unique()
 
         # Ensure there is exactly one baseline value
         if len(original_values) == 1:
             original_value = original_values[0]
-            data_frame.loc[data_frame["matrix_name"] == matrix_name, result_column] = (
-                    df_per_matrix[variable] / original_value
+            data_frame.loc[data_frame[category] == category_value, result_column] = (
+                    df_per_category[variable] / original_value
             ).values
         else:
             # Handle case where there are no original_values values
