@@ -1,13 +1,11 @@
-import numpy as np
 from scipy.io import mmread
-import scipy.sparse as ssp
 
 import wandb
 import multiprocessing
+
+from experiments.experiment_modules import amd_module, partial_gauss_module, rcm_module
 from src.optimizers.padding import sparse_padding
-from src.optimizers.partial_gauss import partial_row_reduce
 from src.optimizers.tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
-from src.optimizers.variable_ordering import amd_order, rcm_order
 
 
 def run_experiments():
@@ -24,25 +22,11 @@ def run_experiments():
 
     # minimize fill in
     if cfg.amd:
-        order = amd_order(a)
-        # perform row and column permutations
-        a = a.tocsr()
-        a.indices = order.take(a.indices)
-        a = a.tocsc()
-        a.indices = order.take(a.indices)
-        a = a.tocsr()
+        a = amd_module(a=a.tocsr())
 
     # reduce n
     if cfg.partial_gauss > 0:
-        a = a.toarray()
-        full_a = partial_row_reduce(a, cfg.partial_gauss)
-        # get remaining part
-        a = full_a[cfg.partial_gauss:, cfg.partial_gauss:]
-
-        threshold = 1e-7
-        # Use np.where to set values close to zero, to zero
-        a = np.where(np.abs(a) < threshold, 0, a)
-        a = ssp.csr_matrix(a)
+        a = partial_gauss_module(a=a, num_variables=cfg.partial_gauss, threshold=cfg.gauss_threshold)
 
     # increase n
     if cfg.padding > 0:
@@ -50,11 +34,7 @@ def run_experiments():
 
     # concentrate nnz entries
     if cfg.rcm:
-        order = rcm_order(a)
-        a = a.tocsr()
-        a.indices = order.take(a.indices)
-        a = a.tocsc()
-        a.indices = order.take(a.indices)
+        a = rcm_module(a=a)
 
     # determine ranks, mode sizes and r2I6
     n = a.shape[0]

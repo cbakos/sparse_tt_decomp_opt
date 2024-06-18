@@ -1,14 +1,13 @@
 import unittest
 
-import cvxopt
 import numpy as np
 from scipy.io import mmread
 
-from experiments.experiment_modules import partial_gauss_module, amd_module, rcm_module
+from experiments.experiment_modules import amd_module, rcm_module
 from optimizers.variable_ordering import amd_order, rcm_order
 
 
-class TestExperimentModules(unittest.TestCase):
+class TestVariableOrdering(unittest.TestCase):
     def test_amd_module(self):
         matrix_name = "ex5"
         path = "../data/{}/{}.mtx".format(matrix_name, matrix_name)

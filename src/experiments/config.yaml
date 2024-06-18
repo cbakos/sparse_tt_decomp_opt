@@ -21,3 +21,5 @@ parameters:
     distribution: int_uniform
     min: 0
     max: 10
+  gauss_threshold:
+    value: 1e-7
