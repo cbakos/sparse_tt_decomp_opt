@@ -9,7 +9,7 @@ from optimizers.variable_ordering import rcm_order
 
 def amd_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
     a = a.tocoo()
-    spa = cvxopt.spmatrix(a.data, a.row, a.col)
+    spa = cvxopt.spmatrix(a.data, a.row, a.col, size=a.shape)
     order = cvxopt.amd.order(spa)
     # perform row and column permutations as described in: https://cvxopt.org/userguide/spsolvers.html#matrix-orderings
     spa_reordered = spa[order, order]
@@ -20,7 +20,7 @@ def amd_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
     cols = np.array(spa_reordered.J).flatten()
 
     # construct result in scipy sparse matrix format
-    a = ssp.coo_matrix((values, (rows, cols)))
+    a = ssp.coo_matrix((values, (rows, cols)), shape=spa_reordered.size)
     a = a.tocsr()
     return a
 
@@ -47,7 +47,7 @@ def rcm_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
     order = cvxopt.matrix(order)
 
     a = a.tocoo()
-    spa = cvxopt.spmatrix(a.data, a.row, a.col)
+    spa = cvxopt.spmatrix(a.data, a.row, a.col, size=a.shape)
     # perform row and column permutations as described in: https://cvxopt.org/userguide/spsolvers.html#matrix-orderings
     spa_reordered = spa[order, order]
 
@@ -57,6 +57,6 @@ def rcm_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
     cols = np.array(spa_reordered.J).flatten()
 
     # construct result in scipy sparse matrix format
-    a = ssp.coo_matrix((values, (rows, cols)))
+    a = ssp.coo_matrix((values, (rows, cols)), shape=spa.size)
     a = a.tocsr()
     return a
