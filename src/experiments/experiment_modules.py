@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import cvxopt
 import numpy as np
 import scipy.sparse as ssp
@@ -25,15 +27,24 @@ def amd_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
     return a
 
 
-def partial_gauss_module(a: ssp.csr_matrix, num_variables: int, threshold: float = 1e-7) -> ssp.csr_matrix:
+def partial_gauss_module(a: ssp.csr_matrix, num_variables: int, threshold: float = 1e-7) \
+        -> Tuple[ssp.csr_matrix, int, int]:
     a = a.toarray()
     full_a = partial_row_reduce(a, num_variables)
-    # get remaining part
-    a = full_a[num_variables:, num_variables:]
     # Use np.where to set values close to zero, to zero
     a = np.where(np.abs(a) < threshold, 0, a)
+
+    # count nonzero entries of full (partially row-reduced) matrix
+    z_full = np.count_nonzero(a)
+
+    # get remaining part
+    a = full_a[num_variables:, num_variables:]
+
+    # number of nonzero entries in sub-matrix
+    z_reduced = np.count_nonzero(a)
+
     a = ssp.csr_matrix(a)
-    return a
+    return a, z_full, z_reduced
 
 
 def padding_module(a: ssp.csr_matrix, num_variables: int) -> ssp.csr_matrix:

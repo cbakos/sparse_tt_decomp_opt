@@ -20,13 +20,17 @@ def run_experiments():
     path = "../../data/{}/{}.mtx".format(cfg.matrix_name, cfg.matrix_name)
     a = mmread(path)  # reads to coo_matrix format
 
+    z_full, z_reduced = a.nnz, a.nnz
+
     # minimize fill in
     if cfg.amd:
         a = amd_module(a=a.tocsr())
 
     # reduce n
     if cfg.partial_gauss > 0:
-        a = partial_gauss_module(a=a, num_variables=cfg.partial_gauss, threshold=cfg.gauss_threshold)
+        a, z_full, z_reduced = partial_gauss_module(a=a,
+                                                    num_variables=cfg.partial_gauss,
+                                                    threshold=cfg.gauss_threshold)
 
     # increase n
     if cfg.padding > 0:
@@ -38,7 +42,6 @@ def run_experiments():
 
     # determine ranks, mode sizes and r2I6
     n = a.shape[0]
-    z = a.nnz
     factors = prime_factors(n)
     max_mode_size = max(factors)
     tile_sizes = possible_tile_sizes_from_factors(factors)
@@ -47,7 +50,12 @@ def run_experiments():
 
         # since we combine factors, maximum mode size is the max of the largest factor and chosen tile size
         max_mode_size = max(max_mode_size, tile)
-        wandb.log({"rank": r, "max_mode_size": max_mode_size, "tile_size": tile, "z": z, "n": n})
+        wandb.log({"rank": r,
+                   "max_mode_size": max_mode_size,
+                   "tile_size": tile,
+                   "z_full": z_full,
+                   "z_reduced": z_reduced,
+                   "n": n})
 
 
 def run_agent(sweep_id):
