@@ -7,9 +7,9 @@ import plotly.express as px
 
 
 def add_tt_mals_runtime_cols(df: pd.DataFrame) -> pd.DataFrame:
-    df["log_obj_func"] = np.log(df["max_mode_size"]**6 +
-                                df["max_mode_size"]**3 * df["rank"] +
-                                df["max_mode_size"]**2 * df["rank"]**2)
+    df["log_obj_func"] = np.log(df["max_mode_size"] ** 6 +
+                                df["max_mode_size"] ** 3 * df["rank"] +
+                                df["max_mode_size"] ** 2 * df["rank"] ** 2)
     df["obj_func"] = np.exp(df["log_obj_func"])
     return df
 
@@ -94,3 +94,25 @@ def get_percentage_change_per_category(data_frame: pd.DataFrame, result_column: 
             # Handle case where there are no original_values values
             raise AssertionError("there should be only one unique, baseline value per matrix")
     return data_frame
+
+
+def line_plot_tile_size_rank_percentage_per_matrix(data_frame: pd.DataFrame, column_str: str) -> None:
+    fig = px.line(data_frame, x="tile_size", y="rank_percentage", color="matrix_name", symbol="matrix_name", log_x=True,
+                  labels={
+                      "rank_percentage": "Rank (r) ratio",
+                      "matrix_name": "Matrix name",
+                      "tile_size": "Tile size",
+                  })
+    fig.update_layout(
+        title={
+            'text': "Influence of {} on ranks for different tile sizes".format(column_str.upper()),
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
+        plot_bgcolor='white',  # Plot area background color
+        paper_bgcolor='white',  # Entire figure background color
+        font=dict(color='black'),  # Font color
+    )
+    fig.show()
+    fig.write_image("plots/{}_tile_size_rank_ratio.pdf".format(column_str))
