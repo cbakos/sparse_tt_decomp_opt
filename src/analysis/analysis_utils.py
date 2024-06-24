@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Any, List
+from typing import Any, List, Dict
 
 import pandas as pd
 import numpy as np
@@ -96,8 +96,10 @@ def get_percentage_change_per_category(data_frame: pd.DataFrame, result_column: 
     return data_frame
 
 
-def line_plot_tile_size_rank_percentage_per_matrix(data_frame: pd.DataFrame, column_str: str) -> None:
+def line_plot_tile_size_rank_percentage_per_matrix(data_frame: pd.DataFrame, column_str: str, matrix_color_map: Dict) \
+        -> None:
     fig = px.line(data_frame, x="tile_size", y="rank_percentage", color="matrix_name", symbol="matrix_name", log_x=True,
+                  color_discrete_map=matrix_color_map,
                   labels={
                       "rank_percentage": "Rank (r) ratio",
                       "matrix_name": "Matrix name",
