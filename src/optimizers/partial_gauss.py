@@ -4,10 +4,9 @@ import numpy as np
 def partial_row_reduce(a: np.array, k: int) -> np.array:
     """
     Performs partial Gauss elimination on a dense matrix a with right-hand side b for the first k variables.
-    :param a: dense coefficient matrix
-    :param b: right hand side vector
+    :param a: dense coefficient matrix together with rhs b
     :param k: first k number of variables to reduce
-    :return: a, b; the partially row-reduced versions of a and b
+    :return: a: the partially row-reduced versions of a and b
     """
     # Determine n
     n = a.shape[0]

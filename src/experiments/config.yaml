@@ -8,7 +8,7 @@ metric:
   name: rank
 parameters:
   matrix_name:
-    values: ["ex3", "ex10", "ex10hs", "ex13", "ex15"] #, "Pres_Poisson", "bcsstk13"]
+    values: ["ex3", "ex10", "ex10hs", "ex13", "bcsstk13"] #, "Pres_Poisson", "ex15"]
   padding:
     distribution: int_uniform
     min: 0
@@ -22,4 +22,4 @@ parameters:
     min: 0
     max: 10
   gauss_threshold:
-    value: 1e-7
+    value: 1e-3
