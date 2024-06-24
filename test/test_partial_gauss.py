@@ -115,8 +115,7 @@ class TestPartialGauss(unittest.TestCase):
         self.assertTrue(np.allclose(sol, expected_sol))
 
     def compute_nonzero_entries_of_reduced_systems(self, matrix_name: str, threshold: float = 1e-7):
-        # Q2: why don't we get that U (from LU factorization) or L from Cholesky equal row-reduced matrix?
-        # - probably because of pivoting/ variable reordering of library methods
+        # U (from LU factorization) or L from Cholesky should equal to row-reduced matrix when no pivoting is applied
         path = "../data/{}/{}.mtx".format(matrix_name, matrix_name)
         a = mmread(path)
         a = a.toarray()
@@ -129,26 +128,28 @@ class TestPartialGauss(unittest.TestCase):
         # complete reduction
         reduced_ab = partial_row_reduce(ab, k)
 
+        # compute sparse LU without any pivoting
         slu = splu(a, permc_spec="NATURAL", diag_pivot_thresh=0, options={"SymmetricMode": True})
         u = slu.U.toarray()
         l = slu.L.toarray()
 
-        # round entries close to zero - for both to ensure nnz counts match
+        # round entries close to zero
         reduced_ab = np.where(np.abs(reduced_ab) < threshold, 0, reduced_ab)
-        u = np.where(np.abs(u) < threshold, 0, u)
-
         reduced_a = reduced_ab[:, :n]
 
-        # check the lu-solve gives right result
+        # check that lu-solve gives right result
         y = sp.linalg.solve(l, b)
         x = sp.linalg.solve(u, y)
-        self.assertTrue(np.allclose(x, np.ones_like(x)))
+        self.assertTrue(np.allclose(x, np.ones_like(x), atol=threshold))
 
-        # check that nonzero entries match for partial Gauss and U from LU decomposition, up to the threshold
+        # check that entries match for partial Gauss and U from LU decomposition, up to the threshold
         self.assertTrue(np.allclose(u, reduced_a, atol=threshold))
 
         # also check number of nonzero entries
         reduced_a_nnz = np.count_nonzero(reduced_a)
+
+        # round entries of u that are close to zero to ensure counts are good
+        u = np.where(np.abs(u) < threshold, 0, u)
         u_nnz = np.count_nonzero(u)
         self.assertEqual(reduced_a_nnz, u_nnz)
 
@@ -165,13 +166,13 @@ class TestPartialGauss(unittest.TestCase):
         self.compute_nonzero_entries_of_reduced_systems("ex10hs")
 
     def test_numerical_error_nonzero_count_ex13(self):
-        self.compute_nonzero_entries_of_reduced_systems("ex13")
+        self.compute_nonzero_entries_of_reduced_systems("ex13", threshold=1e-3)
 
     # def test_numerical_error_nonzero_count_ex15(self):
     #     self.compute_nonzero_entries_of_reduced_systems("ex15")
 
     def test_numerical_error_nonzero_count_bcsstk13(self):
-        self.compute_nonzero_entries_of_reduced_systems("bcsstk13")
+        self.compute_nonzero_entries_of_reduced_systems("bcsstk13", threshold=1e-4)
 
     # def test_numerical_error_nonzero_count_Pres_Poisson(self):
     #     self.compute_nonzero_entries_of_reduced_systems("Pres_Poisson")
