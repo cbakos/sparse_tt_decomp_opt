@@ -19,7 +19,7 @@ if __name__ == '__main__':
     wandb.login()
 
     # Specify the sweep ID
-    sweep_id = 'cbakos/sparse_tt_decomp_opt/4z00uuox'  # Replace with sweep ID
+    sweep_id = 'cbakos/sparse_tt_decomp_opt/oqzu6g7c'  # Replace with sweep ID
 
     # Initialize the WandB API
     api = wandb.Api()
