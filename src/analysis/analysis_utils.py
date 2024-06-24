@@ -19,6 +19,8 @@ def line_plot_padding_tile_size_tt_mals_runtime_per_matrix(df: pd.DataFrame, mat
     default_colorscale = px.colors.sequential.Jet
     colors = px.colors.sample_colorscale(default_colorscale, padding_num)
 
+    df.sort_values(by=["matrix_name", "padding", "tile_size"], inplace=True)
+
     fig = px.line(df[df["matrix_name"] == matrix_str], x="tile_size", y="log_obj_func", color="padding",
                   symbol="padding", log_x=True, color_discrete_sequence=colors,
                   labels={
