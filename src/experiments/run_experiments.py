@@ -33,6 +33,7 @@ def run_experiments():
                                                     threshold=cfg.gauss_threshold)
 
     # increase n
+    # todo: move padding after rcm
     if cfg.padding > 0:
         a = sparse_padding(a.tocoo(), cfg.padding)
 
@@ -40,7 +41,7 @@ def run_experiments():
     if cfg.rcm:
         a = rcm_module(a=a)
 
-    # determine ranks, mode sizes and r2I6
+    # determine ranks, mode sizes
     n = a.shape[0]
     factors = prime_factors(n)
     max_mode_size = max(factors)
@@ -64,7 +65,7 @@ def run_agent(sweep_id):
 
 if __name__ == '__main__':
     num_agents = 12  # Number of parallel agents
-    sweep_id = "cbakos/sparse_tt_decomp_opt/imgz104q"
+    sweep_id = "cbakos/sparse_tt_decomp_opt/7sj1sv80"
 
     processes = []
     for _ in range(num_agents):
