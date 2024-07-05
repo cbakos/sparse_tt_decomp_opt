@@ -21,6 +21,7 @@ def run_experiments():
     a = mmread(path)  # reads to coo_matrix format
 
     z_full, z_reduced = a.nnz, a.nnz
+    n = a.shape[0]
 
     # minimize fill in
     if cfg.amd:
@@ -29,11 +30,11 @@ def run_experiments():
     # reduce n
     if cfg.partial_gauss > 0:
         a, z_full, z_reduced = partial_gauss_module(a=a,
-                                                    num_variables=cfg.partial_gauss,
+                                                    num_variables=int(cfg.partial_gauss*n),
                                                     threshold=cfg.gauss_threshold)
 
     # increase n
-    # todo: move padding after rcm
+    # todo: move padding after rcm?
     if cfg.padding > 0:
         a = sparse_padding(a.tocoo(), cfg.padding)
 
@@ -41,9 +42,9 @@ def run_experiments():
     if cfg.rcm:
         a = rcm_module(a=a)
 
-    # determine ranks, mode sizes
-    n = a.shape[0]
-    factors = prime_factors(n)
+    # determine updated n, ranks, mode sizes
+    new_n = a.shape[0]
+    factors = prime_factors(new_n)
     max_mode_size = max(factors)
     tile_sizes = possible_tile_sizes_from_factors(factors)
     for tile in tile_sizes:
@@ -56,7 +57,7 @@ def run_experiments():
                    "tile_size": tile,
                    "z_full": z_full,
                    "z_reduced": z_reduced,
-                   "n": n})
+                   "n": new_n})
 
 
 def run_agent(sweep_id):
@@ -65,7 +66,7 @@ def run_agent(sweep_id):
 
 if __name__ == '__main__':
     num_agents = 12  # Number of parallel agents
-    sweep_id = "cbakos/sparse_tt_decomp_opt/7sj1sv80"
+    sweep_id = "cbakos/sparse_tt_decomp_opt/kio7ptbz"
 
     processes = []
     for _ in range(num_agents):
