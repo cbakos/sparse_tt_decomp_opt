@@ -5,7 +5,7 @@ import numpy as np
 import scipy.sparse as ssp
 
 from optimizers.padding import sparse_padding
-from optimizers.partial_gauss import partial_row_reduce
+from optimizers.partial_gauss import partial_row_reduce, partial_row_reduce_step
 from optimizers.variable_ordering import rcm_order
 
 

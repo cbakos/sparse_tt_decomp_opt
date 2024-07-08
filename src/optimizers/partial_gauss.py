@@ -19,7 +19,7 @@ def partial_row_reduce(a: np.array, k: int) -> np.array:
 
 def partial_row_reduce_step(a: np.array, i: int, n: int) -> np.array:
     """
-
+    Performs a single row reduction step.
     :param a: matrix to reduce
     :param i: index of variable to reduce
     :param n: total number of variables == number of rows
