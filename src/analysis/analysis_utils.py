@@ -3,7 +3,9 @@ from typing import Any, List, Dict
 
 import pandas as pd
 import numpy as np
+from scipy.stats import norm
 import plotly.express as px
+import plotly.graph_objects as go
 
 
 def add_tt_mals_runtime_cols(df: pd.DataFrame) -> pd.DataFrame:
@@ -120,3 +122,35 @@ def line_plot_tile_size_rank_percentage_per_matrix(data_frame: pd.DataFrame, col
     )
     fig.show()
     fig.write_image("plots/{}_tile_size_rank_ratio.pdf".format(column_str))
+
+
+def normality_check_histogram(data_frame: pd.DataFrame, column_str: str, title_str: str, nbins: int = 40) -> None:
+    fig = px.histogram(data_frame, x=column_str, histnorm="probability", nbins=nbins,
+                       labels={
+                           "log_obj_func": r'$\log(I^6 + rI^3 + r^2I^2)$',
+                       }
+    )
+
+    mean = data_frame[column_str].mean()
+    std_dev = data_frame[column_str].std()
+
+    # Create a normal distribution curve
+    x = np.linspace(min(data_frame[column_str]), max(data_frame[column_str]), 100)
+    y = norm.pdf(x, mean, std_dev)
+
+    # Add the normal distribution curve to the histogram
+    fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name='Normal Distribution'))
+
+    fig.update_layout(
+        title={
+            'text': title_str,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
+        plot_bgcolor='white',  # Plot area background color
+        paper_bgcolor='white',  # Entire figure background color
+        font=dict(color='black'),  # Font color
+    )
+    fig.show()
+    fig.write_image("plots/{}_{}.pdf".format(title_str.lower().replace(" ", "_").replace("<br>", ""), column_str))
