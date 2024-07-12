@@ -71,3 +71,13 @@ def rcm_module(a: ssp.csr_matrix) -> ssp.csr_matrix:
     a = ssp.coo_matrix((values, (rows, cols)), shape=spa.size)
     a = a.tocsr()
     return a
+
+
+def get_sparsity(z: int, n: int) -> float:
+    """
+    Computes sparsity ratio.
+    :param z: number of nonzero entries
+    :param n: matrix size
+    :return: sparsity ratio
+    """
+    return 1.0 - z / n**2

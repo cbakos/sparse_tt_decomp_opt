@@ -19,7 +19,7 @@ if __name__ == '__main__':
     wandb.login()
 
     # Specify the sweep ID
-    sweep_id = 'cbakos/sparse_tt_decomp_opt/uskexrhw'  # Replace with sweep ID
+    sweep_id = 'cbakos/sparse_tt_decomp_opt/usmw3v1u'  # Replace with sweep ID
 
     # Initialize the WandB API
     api = wandb.Api()
@@ -41,4 +41,4 @@ if __name__ == '__main__':
 
     df = pd.DataFrame(all_data)
     print(df)
-    df.to_csv('../../data/sweep_0_10_data5.csv', index=False)
+    df.to_csv('../../data/sweep_inc_data1.csv', index=False)

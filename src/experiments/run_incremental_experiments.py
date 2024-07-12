@@ -4,7 +4,7 @@ from scipy.io import mmread
 import wandb
 import multiprocessing
 
-from experiments.experiment_modules import amd_module, partial_gauss_module, rcm_module
+from experiments.experiment_modules import amd_module, partial_gauss_module, rcm_module, get_sparsity
 from optimizers.partial_gauss import partial_row_reduce_step
 from src.optimizers.padding import sparse_padding
 from src.optimizers.tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
@@ -46,10 +46,17 @@ def run_incremental_experiments():
         z_full = np.count_nonzero(a_full)
 
         # get remaining part
-        a = a_full[num_variables:, num_variables:]
+        a = a_full[i:, i:]
 
         # number of nonzero entries in sub-matrix
         z_reduced = np.count_nonzero(a)
+        new_n = a.shape[0]
+
+        # if sparsity drops too low in remaining matrix, then quit run
+        sparsity_ratio = get_sparsity(z_reduced, new_n)
+        if sparsity_ratio < cfg.min_sparsity:
+            wandb.log({"sparsity_ratio": sparsity_ratio})
+            return  # no need to run any more experiments in this setup
 
         a = ssp.csr_matrix(a)
 
@@ -72,12 +79,13 @@ def run_incremental_experiments():
             # since we combine factors, maximum mode size is the max of the largest factor and chosen tile size
             max_mode_size = max(max_mode_size, tile)
             wandb.log({"rank": r,
-                       "num_reduced_variables": num_variables,
+                       "num_reduced_variables": i,
                        "max_mode_size": max_mode_size,
                        "tile_size": tile,
                        "z_full": z_full,
                        "z_reduced": z_reduced,
-                       "n": new_n})
+                       "n": new_n,
+                       "sparsity_ratio": sparsity_ratio})
 
 
 def run_agent(sweep_id):
@@ -85,8 +93,8 @@ def run_agent(sweep_id):
 
 
 if __name__ == '__main__':
-    num_agents = 6  # Number of parallel agents
-    sweep_id = "cbakos/sparse_tt_decomp_opt/usmw3v1u"
+    num_agents = 4  # Number of parallel agents
+    sweep_id = "cbakos/sparse_tt_decomp_opt/i2l7k1xl"
 
     processes = []
     for _ in range(num_agents):
