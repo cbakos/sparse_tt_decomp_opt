@@ -130,3 +130,6 @@ dmypy.json
 src/wandb
 src/experiments/wandb
 wandb
+
+# ignore too large data files
+data/sweep_inc_data1.csv
