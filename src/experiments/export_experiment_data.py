@@ -5,7 +5,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def fetch_run_history(run):
-    history = run.history()
+    # make sure sample size can cover all data points (number of runs x number of logs per run)
+    history = run.history(samples=700000)  
     config = run.config
     run_data = []
     for _, row in history.iterrows():
