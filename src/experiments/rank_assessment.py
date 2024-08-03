@@ -12,6 +12,8 @@ def get_matrix(matrix_name: str, n: int = 2000) -> np.ndarray:
     if matrix_name == "hilbert":
         dense_a = sla.hilbert(n)
     elif matrix_name == "vandermonde":
+        np.random.seed(0)
+        x = np.random.rand(n)  # use smaller values for Vandermonde to avoid numerical issues
         dense_a = np.vander(x)
     elif matrix_name == "hankel":
         dense_a = sla.hankel(x)
