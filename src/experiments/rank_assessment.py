@@ -50,6 +50,9 @@ def get_ranks_for_matrix(matrix_name: str):
 
 
 if __name__ == '__main__':
+    """
+    This script compares the linear algebra rank, numerical rank and TT-rank of the chosen matrices.
+    """
     matrix_names = ["ex10", "ex3", "ex10hs", "ex13", "hilbert", "vandermonde", "hankel", "toeplitz"]
     for matrix_name in matrix_names:
         get_ranks_for_matrix(matrix_name)

@@ -13,8 +13,8 @@ def matrix2mpo_time_complexity(z: float, r: float, I: float, d: float) -> float:
     return z + d * I ** 2 * r ** 2
 
 
-def tt_svd_vec_time_complexity(r: float, I: float, n: float) -> float:
-    return n * I * r ** 3
+def tt_svd_vec_time_complexity(s: float, I: float, n: float) -> float:
+    return n * I * s ** 3
 
 
 def tt_svd_mat_time_complexity(r: float, I: float, n: float) -> float:
@@ -58,7 +58,7 @@ def tt_solve_with_conversions_time_complexity(s: float, r: float, I: float, d: f
     v = (tt_solve_time_complexity(s=s, r=r, I=I, d=d, num_iterations=num_it) +
          matrix2mpo_time_complexity(z=z, r=r, I=I, d=d) +
          tt_sol2vec_sol_time_complexity(s=s, d=d, n=n) +
-         tt_svd_vec_time_complexity(r=r, I=I, n=n))
+         tt_svd_vec_time_complexity(s=s, I=I, n=n))
     return v
 
 
