@@ -6,6 +6,7 @@ import numpy as np
 from scipy.stats import norm
 import plotly.express as px
 import plotly.graph_objects as go
+from time_complexity_utils import *
 
 
 def add_tt_mals_runtime_cols(df: pd.DataFrame) -> pd.DataFrame:
@@ -13,6 +14,16 @@ def add_tt_mals_runtime_cols(df: pd.DataFrame) -> pd.DataFrame:
                                 df["max_mode_size"] ** 3 * df["rank"] +
                                 df["max_mode_size"] ** 2 * df["rank"] ** 2)
     df["obj_func"] = np.exp(df["log_obj_func"])
+
+    # also add full runtimes with O(log(n)) assumption for s and c
+    df["full_runtime"] = tt_solve_with_conversions_time_complexity(s=np.log(df["n"]),
+                                                                   r=df["rank"],
+                                                                   I=df["max_mode_size"],
+                                                                   d=np.log(df["n"]),
+                                                                   num_it=np.log(df["n"]),
+                                                                   z=df["z_reduced"],
+                                                                   n=df["n"])
+    df["log_full_runtime"] = np.log(df["full_runtime"])
     return df
 
 
