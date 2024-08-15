@@ -6,6 +6,8 @@ import numpy as np
 from scipy.stats import norm
 import plotly.express as px
 import plotly.graph_objects as go
+
+from optimizers.tile_size import prime_factors
 from time_complexity_utils import *
 
 
@@ -51,6 +53,9 @@ def line_plot_padding_tile_size_tt_mals_runtime_per_matrix(df: pd.DataFrame, mat
         font=dict(color='black'),  # Font color
         yaxis_title=r'$\log(I^6 + rI^3 + r^2I^2)$'
     )
+    # enlarge baseline tile size markers
+    fig.for_each_trace(lambda trace: update_marker_size(df[df["matrix_name"] == matrix_str], trace, int(trace.name),
+                                                         "padding"))
     fig.show()
     fig.write_image("plots/{}_padding_tile_size_vs_log_obj_func.pdf".format(matrix_str))
 
@@ -165,3 +170,20 @@ def normality_check_histogram(data_frame: pd.DataFrame, column_str: str, title_s
     )
     fig.show()
     fig.write_image("plots/{}_{}.pdf".format(title_str.lower().replace(" ", "_").replace("<br>", ""), column_str))
+
+
+def get_largest_prime_factor(row):
+    return max(prime_factors(row["n"]))
+
+
+# a function to update marker sizes
+def update_marker_size(dataframe, trace, group, group_name):
+    # Select the subset of the data for the current group
+    group_data = dataframe[dataframe[group_name] == group]
+
+    # Determine marker sizes based on the condition
+    marker_sizes = [15 if cond else 5 for cond in group_data['is_baseline_tile']]
+
+    # Update the trace's marker size
+    trace.update(marker=dict(size=marker_sizes))
+    return trace
