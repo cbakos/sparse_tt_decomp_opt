@@ -94,7 +94,7 @@ def run_agent(sweep_id):
 
 if __name__ == '__main__':
     num_agents = 4  # Number of parallel agents
-    sweep_id = "cbakos/sparse_tt_decomp_opt/zc778law"
+    sweep_id = "cbakos/sparse_tt_decomp_opt/pyq7fpmr"
 
     processes = []
     for _ in range(num_agents):
