@@ -18,7 +18,7 @@ parameters:
   rcm:
     values: [True, False]
   partial_gauss:
-    value: 0.9
+    value: 0.002
 #    distribution: int_uniform
 #    min: 0
 #    max: 10
