@@ -134,3 +134,4 @@ wandb
 # ignore too large data files
 data/sweep_inc_data1.csv
 data/sweep_inc_data1_new_pad.csv
+data/sweep_inc_data2_new_pad.csv
