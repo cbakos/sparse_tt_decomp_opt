@@ -44,7 +44,7 @@ ID and output path to download the experimental results from the wandb cloud int
 - 3.2 The Figures from Chapter 4 (Results) can be obtained by running two Jupyter notebooks:
 ```src/analysis/experiment_data_analysis_solo_modules.ipynb``` and 
 ```src/analysis/experiment_data_analysis_combined_modules.ipynb```
- 
+- 3.3 To obtain the different ranks summarized in Table 2.1, run ```src/experiments/rank_assessment.py```
 
 
 #### References

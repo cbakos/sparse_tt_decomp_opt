@@ -16,6 +16,12 @@ def fetch_run_history(run):
 
 
 if __name__ == '__main__':
+    """
+    Script to export experiment data from wandb cloud to local csv file.
+    Make sure that you collect all data points by adjusting the sample count in run.history() above.
+    You also need use the appropriate sweep ID and choose a suitable output path.
+    """
+
     # Login to wandb (use your API key)
     wandb.login()
 

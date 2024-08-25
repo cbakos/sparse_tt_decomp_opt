@@ -4,7 +4,7 @@ from scipy.io import mmread
 import wandb
 import multiprocessing
 
-from experiments.experiment_modules import amd_module, partial_gauss_module, rcm_module, get_sparsity
+from experiments.experiment_modules import amd_module, rcm_module, get_sparsity
 from optimizers.partial_gauss import partial_row_reduce_step
 from src.optimizers.padding import sparse_padding
 from src.optimizers.tile_size import prime_factors, possible_tile_sizes_from_factors, get_rank_from_tile_size
@@ -93,8 +93,11 @@ def run_agent(sweep_id):
 
 
 if __name__ == '__main__':
+    """
+    Runs experiments in parallel, without restarting PG for every experiment separately.
+    """
     num_agents = 4  # Number of parallel agents
-    sweep_id = "cbakos/sparse_tt_decomp_opt/qq6ubecz"
+    sweep_id = "cbakos/sparse_tt_decomp_opt/dt56f11g"
 
     processes = []
     for _ in range(num_agents):

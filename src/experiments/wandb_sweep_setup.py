@@ -4,8 +4,7 @@ import yaml
 if __name__ == '__main__':
     """
     After adjusting config.yaml, run this script to initialize wandb sweep. Copy the returned sweep_id.
-    Then go to the terminal (e.g. Cmder on Windows) and start up agents (separate terminal windows) to process the jobs:
-    wandb agent cbakos/sparse_tt_decomp_opt/sweep_id  # add generated sweep id
+    Next, go and configure src/experiments/run_incremental_experiments.py before running it.
     """
     # Load the YAML configuration file
     with open('config.yaml', 'r') as file:
