@@ -31,7 +31,8 @@ you can use the ```data/ssgetpy_download.py``` script to download the matrix fil
 These can be extracted using ```data/extract_data.py``` program.
 
 **Part 2: Run experiments**
-- 2.0 Note: the experimental data is given in ```data/sweep_inc_data1_new_pad.zip``` (unzip needed) and 
+
+Note: the experimental data is given in ```data/sweep_inc_data1_new_pad.zip``` (unzip needed) and 
 ```data/sweep_inc_data2_new_pad.csv```. However, you can also obtain these by following the next instructions.
 - 2.1 Adjust the ```src/experiments/config.yaml``` file
 - 2.2 Run ```wandb_sweep_setup.py```, copy the ID of the initialized sweep
