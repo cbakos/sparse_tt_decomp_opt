@@ -15,7 +15,7 @@
 ```test```: test suite for custom implementations
 
 #### Reproducing results
-In order to obtain my results, you can follow the below outlined procedure.
+In order to obtain our results, you can follow the procedure outlined below.
 
 **Part 1: Setup**
 
