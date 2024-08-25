@@ -31,10 +31,19 @@ you can use the ```data/ssgetpy_download.py``` script to download the matrix fil
 These can be extracted using ```data/extract_data.py``` program.
 
 **Part 2: Run experiments**
+- 2.1 Adjust the ```src/experiments/config.yaml``` file
+- 2.2 Run ```wandb_sweep_setup.py```, copy the ID of the initialized sweep
+- 2.3 Use the copied ID to run ```src/experiments/run_incremental_experiments.py``` (this will take a while)
+- 2.4 When the experiments are finished, run ```src/experiments/export_experiment_data.py``` with the appropriate sweep 
+ID and output path to download the experimental results from the wandb cloud into a local CSV file
 
 **Part 3: Plot and analyse results**
 
-
+- 3.1 The theoretical runtime complexity plots (Figures 3.1, 3.2) are made by running the
+```src/analysis/tt_solve_time_complexity.ipynb``` Jupyter Notebook.
+- 3.2 The Figures from Chapter 4 (Results) can be obtained by running two Jupyter notebooks:
+```src/analysis/experiment_data_analysis_solo_modules.ipynb``` and 
+```src/analysis/experiment_data_analysis_combined_modules.ipynb```
  
 
 
