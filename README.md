@@ -2,6 +2,7 @@
 
 ### Code repository for my Computer Science MSc thesis at the Delft University of Technology.
 
+### You can read my thesis report [here](https://repository.tudelft.nl/record/uuid:6e677efe-2aea-49ae-a2ed-ee73f6057bbb).
 #### Project folder structure
 ```data```: contains the sparse matrices from [1] that we use and the data collected from the experiments
 
